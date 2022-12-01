@@ -3,6 +3,6 @@
   import "remixicon/fonts/remixicon.css";
 </script>
 
-<svelte:body  />
+<svelte:body />
 
 <slot />

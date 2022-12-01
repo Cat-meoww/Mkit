@@ -13,9 +13,8 @@
   import CreateDatabase from "$Components/MyModals/CreateDatabase.svelte";
   import { Sortbyname } from "$Components/helper.js";
   import { Reloadsidebar } from "$Components/stores.js";
-  import { browser, dev } from '$app/environment';
+  import { browser, dev, } from '$app/environment';
   console.log({browser, dev });
-  
   // export let data;
   // const { datalist } = data;
   let databases = [];
