@@ -4,17 +4,18 @@
     NavCollReload,
     DropDbData,
     DropDb,
-    Reloadsidebar
+    Reloadsidebar,
+    sidebar,
   } from "$Components/stores.js";
 
-  import { beforeUpdate,afterUpdate } from "svelte";
-  import {Blacklist} from "$Components/helper.js"
-  
+  import { beforeUpdate, afterUpdate } from "svelte";
+  import { Blacklist } from "$Components/helper.js";
+
   import DropDatabase from "$Components/GlobalModals/DropDatabase.svelte";
 
   $: OrginDb = $DropDbData?.db ?? "";
 
-  console.log({ OrginDb });
+  //console.log({ OrginDb });
   let DropModal = {
     error: false,
     msg: false,
@@ -33,7 +34,7 @@
         let data = $DropDbData;
         console.log("valid", data);
         await DropModal.pingnewcollection(data);
-
+        DropModal.sidebar(data);
         DropModal.cancel();
       } catch (error) {
         console.log("invalid");
@@ -44,6 +45,14 @@
     noerror: () => {
       DropModal.error = false;
       DropModal.msg = "";
+    },
+    sidebar: (data) => {
+      if ($sidebar.Db == data?.db ?? "") {
+        $sidebar.IsDb = false;
+        $sidebar.Db = "";
+        $sidebar.Collection = "";
+        $sidebar.CurrentDataSet = "";
+      }
     },
 
     validate: (dbname) => {
@@ -85,7 +94,7 @@
             $DbPageReload = !$DbPageReload;
             $NavCollReload.state = !$NavCollReload.state;
             $NavCollReload.db = data.db;
-            $Reloadsidebar=!$Reloadsidebar
+            $Reloadsidebar = !$Reloadsidebar;
           }
         } else {
           return Promise.reject(await response.json());
@@ -96,15 +105,12 @@
       }
     },
   };
-  
-  
 
-  
-  afterUpdate(()=>{
-    if(Blacklist(OrginDb)){
+  afterUpdate(() => {
+    if (Blacklist(OrginDb)) {
       DropModal.cancel();
     }
-  })
+  });
 </script>
 
 {#if $DropDb}

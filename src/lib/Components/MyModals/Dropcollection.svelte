@@ -9,7 +9,7 @@
 
   $: OrginCollection = $DropData?.collection ?? "";
   $: OrginDb = $DropData?.db ?? "";
-   console.log({OrginDb})
+   //console.log({OrginDb})
   let DropModal = {
     error: false,
     msg: false,

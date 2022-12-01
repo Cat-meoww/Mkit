@@ -12,12 +12,12 @@
   import DropDatabase from "$Components/MyModals/DropDatabase.svelte";
   import CreateDatabase from "$Components/MyModals/CreateDatabase.svelte";
   import { Sortbyname } from "$Components/helper.js";
-  import { Reloadsidebar } from "$Components/stores.js";
+  import { Reloadsidebar,Maindata,completedReload } from "$Components/stores.js";
   import { browser, dev, } from '$app/environment';
   console.log({browser, dev });
   // export let data;
   // const { datalist } = data;
-  let databases = [];
+  // let databases = [];
   // let onload = async () => {
   //   let temp = await JSON.parse(datalist);
   //   // databases = temp.databases;
@@ -47,8 +47,9 @@
         if (response.status === 200) {
           let result = await response.json();
           if (result?.ok ?? false) {
-            databases = result.databases;
-            databases.sort(Sortbyname);
+            $Maindata = result;
+            $Maindata.databases.sort(Sortbyname);
+            $completedReload=!$completedReload;
           }
         } else {
           console.log(await response.json());
@@ -75,7 +76,7 @@
   <Sidebar>
     <Hostinfo />
     <Sidegroup GroupName="Database">
-      {#each databases as database}
+      {#each $Maindata?.databases??[{}] as database}
         {#if !database.empty}
           <Listitems dbname={database.name} />
         {/if}

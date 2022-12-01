@@ -2,11 +2,11 @@
   import Header from "./Index/header.svelte";
   import SkeltonHeader from "./Index/loadingheader.svelte";
   import DatabasesList from "./Index/Databases.svelte";
-  import { Reloadsidebar } from "$Components/stores.js";
+  import { Reloadsidebar, Maindata ,completedReload} from "$Components/stores.js";
 
   let db = {
-    total:0,
-    size:0
+    total: 0,
+    size: 0,
   };
   function readableBytes(bytes) {
     if (bytes == 0) {
@@ -37,25 +37,39 @@
       return new Promise((resolve, reject) => {
         try {
           if (result?.ok ?? false) {
-            db.total=result.databases.length
-            db.size=readableBytes(result.totalSize)
-            db.databases=result.databases
-             resolve(true)
-             return;
+            db.total = result.databases.length;
+            db.size = readableBytes(result.totalSize);
+            db.databases = result.databases;
+            resolve(true);
+            return;
           }
           reject("failed to fetch");
-           return;
-          
+          return;
         } catch (e) {
-            console.error("op Index  -----> ",e);
-            reject(e);
+          console.error("op Index  -----> ", e);
+          reject(e);
         }
       });
     } catch (e) {
       console.error(e);
     }
   };
-  $: Mypromise = firstload({ status: true }, $Reloadsidebar);
+  let Custom_Load = async (reload) => {
+    console.log("completedReload",reload);
+    return new Promise((resolve, reject) => {
+      try {
+        
+        db.total = $Maindata?.databases.length??0;
+        db.size = readableBytes($Maindata?.totalSize??0);
+        db.databases = $Maindata?.databases??[{}];
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+  // $: Mypromise = firstload({ status: true }, $Reloadsidebar);
+  $: Mypromise = Custom_Load($completedReload);
 </script>
 
 <div class="collection flex flex-col ">
@@ -63,7 +77,7 @@
     <SkeltonHeader />
   {:then ok}
     <Header {db} />
-    <DatabasesList bind:dbs={db.databases}  />
+    <DatabasesList bind:dbs={db.databases} />
   {:catch error}
     <p style="color: red">{error}</p>
   {/await}

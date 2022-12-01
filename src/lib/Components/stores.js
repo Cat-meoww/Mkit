@@ -29,7 +29,14 @@ export let DropDbData = writable(false);
 
 //state of dbpage reload
 export let DbPageReload = writable(false);
-//state of dbpage reload
+//state of sidebar reload
 export let Reloadsidebar = writable(false);
+export let completedReload = writable(false);
 //state of navigation collection reload
 export let NavCollReload = writable({ state: false, db: false});
+
+
+
+// Main data
+
+export let Maindata=writable();

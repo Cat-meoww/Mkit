@@ -48,7 +48,7 @@
   }
   function Toggle() {
     toggle = !toggle;
-    console.log("tog", FirstLoad);
+    console.log("tog -> "+dbname, FirstLoad);
     if (FirstLoad) {
       getcollection({ database: dbname });
       $sidebar.IsDb = true;
