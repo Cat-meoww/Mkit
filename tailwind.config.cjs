@@ -5,12 +5,23 @@ let newcolors = {
     neutral: "#bfb8ac",
     white: "#e5e0d8",
     icon: "#a49b8e",
+    bluetext: "#79a0bb",
+    greentext:"#9fdfb4",
     card: {
       backdrop: "#131d2399",
       textcolor: "#a79e91",
       bg: "#242525",
       hoverbg: "#2b3531",
       btnborder: "#575b5c",
+    },
+    tabs: {
+      texthover: "#cac3b8",
+      border: "#3f4242",
+      selected: { text: "#9be2c6", tile: "#24854a" },
+      filter: {
+        border: "#4b4f4f",
+        badge: "#464949",
+      },
     },
     sidebar: {
       db: {

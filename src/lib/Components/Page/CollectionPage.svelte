@@ -4,6 +4,8 @@
   export let db;
   export let collection;
   import Onheader from "./Collection/Onheader.svelte";
+  import Tabs from "./Collection/Tabs.svelte";
+  import TabsContainer from "./Collection/Tabs/TabsContainer.svelte";
   let props = {
     docs: 0,
     index: 0,
@@ -28,12 +30,15 @@
       console.error(e);
     }
   }
-
+  
+  //Default
+  let CurrentTab="Documents";
   onMount(() => {
     let data = { Database: db, Collection: collection };
     IndexInfo(data);
     console.log("Onmount");
   });
+  $: console.log('CurrentTab', CurrentTab);
   // onDestroy(() => {
   //   console.log("onDestroy");
   // });
@@ -49,6 +54,8 @@
 
 <div class="flex flex-col">
   <Onheader {db} {collection} {...props} />
+  <Tabs bind:CurrentTab={CurrentTab} />
+  <TabsContainer {db} {collection} {dataset} {CurrentTab}/>
   <div class="flex offheader" />
 </div>
-<h1>DataSet {dataset}</h1>
+<!-- <h1>DataSet {dataset}</h1> -->
