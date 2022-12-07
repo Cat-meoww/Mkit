@@ -3,6 +3,7 @@ import { error } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 
 import Client from "$db/Mongo.js";
+import { MongoServerError } from "mongodb";
 
 const LIMIT = 10;
 
@@ -42,8 +43,14 @@ export async function POST({ request }) {
       throw error(400, "Error filter input" + typeof filter);
     }
   } catch (e) {
-    console.log(e);
-    throw error(400, e);
+    if (e instanceof MongoServerError) {
+      throw error(400, {
+        error: true,
+        type: "mongo",
+        msg: `${e}`,
+      });
+    }
+    throw error(400, { error: true, msg: e });
   }
 }
 
@@ -94,10 +101,26 @@ function GetTotalAggegation(payload, OPCOUNT) {
 
   return agg;
 }
+function IsemptyObject(obj) {
+  if (
+    obj &&
+    Object.keys(obj).length &&
+    Object.getPrototypeOf(obj) === Object.prototype
+  ) {
+    return true;
+  }
+  return false;
+}
 function GetAgg(payload) {
   let limit = convert2int(payload?.limit ?? 0);
   let skip = convert2int(payload?.skip ?? 0);
   let filter = payload?.filter ?? {};
+  let sort = payload?.sort ?? {};
+  let project = payload?.project ?? {};
+  console.log(project?._id ?? false);
+  if ((project?._id ?? true) === 0) {
+    delete project["_id"];
+  }
 
   let APPSKIP = convert2int(payload?.APPSKIP ?? 0);
   let agg = [
@@ -105,6 +128,16 @@ function GetAgg(payload) {
       $match: filter,
     },
   ];
+  if (IsemptyObject(project)) {
+    agg.push({
+      $project: project,
+    });
+  }
+  if (IsemptyObject(sort)) {
+    agg.push({
+      $sort: sort,
+    });
+  }
 
   if (skip > 0) {
     agg.push({

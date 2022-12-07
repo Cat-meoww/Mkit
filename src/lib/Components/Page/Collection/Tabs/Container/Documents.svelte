@@ -5,6 +5,8 @@
   import Documents from "./Documents/Documents.svelte";
   import Arrow from "$Components/Page/Database/Icons/RightArrow.svelte";
   import TabsContainer from "../TabsContainer.svelte";
+  export let db;
+  export let collection;
   const APPSKIP = 10;
   let Controller = {
     Optionstate: false,
@@ -114,9 +116,6 @@
     },
   };
 
-  export let db;
-  export let collection;
-
   let saved = {
     filter: "",
     project: "",
@@ -129,6 +128,8 @@
       saved.skip = form.skip;
       saved.limit = form.limit;
       saved.filter = form.filter;
+      saved.project = form.project;
+      saved.sort = form.sort;
     },
   };
   let form = {
@@ -158,13 +159,17 @@
             filter: JSON.parse(saved.filter == "" ? "{}" : saved.filter),
             limit: form.convert2int(saved.limit),
             skip: form.convert2int(saved.skip),
+            sort: JSON.parse(saved.sort == "" ? "{}" : saved.sort),
+            project: JSON.parse(saved.project == "" ? "{}" : saved.project),
             APPSKIP: form.convert2int(APPSKIP),
           };
           await form.trytofind(payload);
+          validate.unseterror();
           return true;
         }
       } catch (e) {
         console.error(e);
+
         return false;
       }
     },
@@ -182,9 +187,14 @@
           };
           const response = await fetch("/api/Find", options);
           const result = await response.json();
-          Tablecontroller.set(result);
-
-          resolve(true);
+          if (!result?.error ?? false) {
+            Tablecontroller.set(result);
+            validate.unseterror();
+            resolve(true);
+          } else {
+            validate.seterror(result?.msg ?? "Error Bad request");
+            reject(true);
+          }
         } catch (e) {
           console.error(e);
           reject(e);
@@ -207,6 +217,16 @@
     collation: false,
     skip: false,
     limit: false,
+    servererror: false,
+    servermsg: "",
+    seterror: (msg) => {
+      validate.servererror = true;
+      validate.servermsg = msg;
+    },
+    unseterror: () => {
+      validate.servererror = false;
+      validate.servermsg = "";
+    },
 
     isJSON: (data) => {
       try {
@@ -230,6 +250,25 @@
         validate.filter = true;
       }
     },
+    Vproject: () => {
+      if (validate.isJSON(form.project) || form.project === "") {
+        //no error happen
+
+        validate.project = false;
+      } else {
+        //error happen
+        validate.project = true;
+      }
+    },
+    Vsort: () => {
+      if (validate.isJSON(form.sort) || form.sort === "") {
+        //no error happen
+        validate.sort = false;
+      } else {
+        //error happen
+        validate.sort = true;
+      }
+    },
     Vlimit: () => {
       form.limit = form.convert2int(form.limit);
       if (Number.isInteger(form.limit) || form.limit === "") {
@@ -248,7 +287,12 @@
     },
     all: () => {
       return new Promise((resolve, reject) => {
-        if (!validate.Vfilter() && !validate.Vlimit()) {
+        if (
+          !validate.Vfilter() &&
+          !validate.Vlimit() &&
+          !validate.Vsort() &&
+          !validate.Vproject()
+        ) {
           return resolve(true);
         } else {
           return reject(false);
@@ -290,6 +334,8 @@
           <Inputs
             name="Project"
             css="flex-1"
+            bind:error={validate.project}
+            on:keyup={validate.Vproject}
             bind:value={form.project}
             placeholder={"{ field: 0 }"} />
         </div>
@@ -299,6 +345,8 @@
           <Inputs
             css="flex-1"
             name="sort"
+            bind:error={validate.sort}
+            on:keyup={validate.Vsort}
             bind:value={form.sort}
             placeholder={"{ field: -1 } or [['field', -1]]"} />
           <Inputs
@@ -343,16 +391,24 @@
     </div>
   </div>
 </div>
-
+{#if validate.servererror}
+  <div
+    class="m-3 bg-mongodark-100 pl-5 py-2 border rounded border-red-700 text-red-600">
+    {validate.servermsg}
+  </div>
+{/if}
 <ResultTab
   bind:total={Tablecontroller.ResultCount}
   on:forward={Tablecontroller.after}
   on:backward={Tablecontroller.before}
+  on:reload={Tablecontroller.handleFind}
   bind:from={Tablecontroller.from}
   bind:to={Tablecontroller.to}
-  bind:disableforward={Tablecontroller.disableforward} />
+  bind:disableforward={Tablecontroller.disableforward}
+  {db}
+  {collection} />
 
-<Documents bind:docs={data} />
+<Documents bind:docs={data} {db} {collection} />
 
 <style>
   .btn-primary {
