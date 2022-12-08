@@ -8,7 +8,7 @@
   <Documents {...$$restProps} />
 </div>
 <div class:hidden={CurrentTab !== "Aggregation"}>
-  <Aggregation  />
+  <Aggregation {...$$restProps}  />
 </div>
 
 <!-- {#if CurrentTab === "Documents"}

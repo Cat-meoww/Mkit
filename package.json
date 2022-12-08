@@ -22,6 +22,7 @@
 	"type": "module",
 	"dependencies": {
 		"@tailwindcss/typography": "^0.5.8",
+		"json5": "^2.2.1",
 		"remixicon": "^2.5.0",
 		"theme-change": "^2.2.0"
 	}
