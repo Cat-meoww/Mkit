@@ -6,7 +6,7 @@ let newcolors = {
     white: "#e5e0d8",
     icon: "#a49b8e",
     bluetext: "#79a0bb",
-    greentext:"#9fdfb4",
+    greentext: "#9fdfb4",
     card: {
       backdrop: "#131d2399",
       textcolor: "#a79e91",
@@ -26,6 +26,19 @@ let newcolors = {
     sidebar: {
       db: {
         hoverbg: "#24252500",
+      },
+    },
+    btn: {
+      dark: {
+        bg: "#242c28",
+        hover: {
+          bg: "#242525",
+          border: "#575b5c",
+          box: { b: "#0d0d0d4d", c: "#2b3531" },
+        },
+        border: "#575b5c",
+        color: "#b9b1a6",
+        box: "#131d234d",
       },
     },
     green: {

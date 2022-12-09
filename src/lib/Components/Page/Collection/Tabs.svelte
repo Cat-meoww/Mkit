@@ -9,7 +9,7 @@
       //console.log(CurrentTab);
     },
   };
-  let Tabs = ["Documents", "Aggregation", "Indexes", "cops"];
+  let Tabs = ["Documents", "Aggregation", "Indexes"];
 </script>
 
 <div

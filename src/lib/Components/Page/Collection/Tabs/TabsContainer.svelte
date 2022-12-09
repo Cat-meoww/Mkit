@@ -1,6 +1,7 @@
 <script>
   import Documents from "./Container/Documents.svelte";
   import Aggregation from "./Container/Aggregation.svelte";
+  import Indexes from "./Container/Indexes.svelte";
   export let CurrentTab;
 </script>
 
@@ -9,6 +10,9 @@
 </div>
 <div class:hidden={CurrentTab !== "Aggregation"}>
   <Aggregation {...$$restProps}  />
+</div>
+<div class:hidden={CurrentTab !== "Indexes"}>
+  <Indexes {...$$restProps}  />
 </div>
 
 <!-- {#if CurrentTab === "Documents"}
