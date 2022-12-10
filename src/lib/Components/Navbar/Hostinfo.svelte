@@ -1,4 +1,7 @@
 <script>
+  import { onMount } from "svelte";
+  let version=0;
+  let host="0.0.0.0";
   async function get_server_data() {
     try {
       const options = {
@@ -12,13 +15,15 @@
       };
       const response = await fetch("/api/ServerStatus", options);
       const result = await response.json();
+      version=result?.version??"0.0.0";
+      host=result?.you??"0.0.0,0";
       console.log("Host Info", result);
     } catch (e) {
       console.error(e);
     }
   }
 
-  //get_server_data();
+  onMount(get_server_data);
 </script>
 
 <div class="flex overflow-hidden bg-mongoshade">
@@ -29,24 +34,12 @@
           <div class="text-mongo-neutral  font-bold text-xs">HOSTS</div>
           <div
             class="text-mongo-white text-sm text-ellipsis whitespace-nowrap overflow-hidden"
-            data-test-id="topology-replica-set-host-address-0"
-            title="ac-okcshsn-shard-00-00.veg53ys.mongodb.net:27017">
-            ac-okcshsn-shard-00-00.veg53ys.mongodb.net:27017
+            data-test-id="topology-replica-set-host-address-0">
+            {host}
           </div>
-          <div
-            class="text-mongo-white text-sm text-ellipsis whitespace-nowrap overflow-hidden"
-            data-test-id="topology-replica-set-host-address-1"
-            title="ac-okcshsn-shard-00-01.veg53ys.mongodb.net:27017">
-            ac-okcshsn-shard-00-01.veg53ys.mongodb.net:27017
-          </div>
-          <div
-            class="text-mongo-white text-sm text-ellipsis whitespace-nowrap overflow-hidden"
-            data-test-id="topology-replica-set-host-address-2"
-            title="ac-okcshsn-shard-00-02.veg53ys.mongodb.net:27017">
-            ac-okcshsn-shard-00-02.veg53ys.mongodb.net:27017
-          </div>
+          
         </div>
-        <div class="flex flex-col p-0 ">
+        <!-- <div class="flex flex-col p-0 ">
           <div class="text-mongo-neutral  font-bold text-xs">CLUSTER</div>
           <div
             class="text-mongo-white text-sm text-ellipsis whitespace-nowrap overflow-hidden"
@@ -57,7 +50,7 @@
             class="text-mongo-white text-sm text-ellipsis whitespace-nowrap overflow-hidden">
             3 Nodes
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="flex px-6 py-1.5 flex-col" data-test-id="server-version">
@@ -65,7 +58,7 @@
       <div
         class="text-mongo-white text-sm text-ellipsis whitespace-nowrap overflow-hidden"
         data-test-id="server-version-text">
-        MongoDB 5.0.14 Enterprise
+        MongoDB {version}
       </div>
     </div>
   </div>
