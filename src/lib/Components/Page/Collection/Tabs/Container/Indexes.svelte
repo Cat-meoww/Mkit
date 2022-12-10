@@ -1,7 +1,9 @@
 <script>
   import RefreshIcon from "$Components/Icons/Refresh.svelte";
   import Indextable from "./Indexes/Indextable.svelte";
-  import { onMount } from "svelte";
+  import CreateIndex from "$Components/GlobalModals/CreateIndex.svelte";
+  import { onMount, createEventDispatcher } from "svelte";
+  const dispatch = new createEventDispatcher();
   let IndexesPromise = Promise.resolve(true);
   export let db;
   export let collection;
@@ -36,9 +38,75 @@
       });
     },
   };
-  onMount(()=>{
+  let modal = {
+    state: false,
+    error: false,
+    errmsg: false,
+
+    indexFields: 1,
+    reload: () => {
+      Tab.Refresh();
+    },
+    open: () => {
+      modal.state = true;
+    },
+    reset: () => {
+      modal.unseterror();
+    },
+    seterror: (msg) => {
+      modal.error = true;
+      modal.errmsg = msg;
+    },
+    unseterror: () => {
+      modal.error = false;
+      modal.errmsg = false;
+    },
+    change: () => {},
+    submit: async (event) => {
+      let formdata = event.detail?.coin ?? [];
+      console.log(formdata);
+      await modal.createIndex(formdata);
+    },
+    createIndex: async (payload) => {
+      try {
+        let data = {
+          payload,
+          db,
+          collection,
+        };
+        const options = {
+          method: "POST",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        };
+        const response = await fetch("/api/CreateIndex", options);
+        const result = await response.json();
+        if (result?.ok ?? false) {
+          modal.unseterror();
+          modal.close();
+          modal.reload();
+        } else {
+          modal.seterror(result?.msg??result);
+        }
+      } catch (error) {
+        throw error;
+        modal.seterror(error);
+      }
+    },
+    close: () => {
+      modal.state = false;
+      modal.reset();
+    },
+  };
+  onMount(() => {
     Tab.Refresh();
-  })
+  });
+
+  
 </script>
 
 <div
@@ -53,6 +121,7 @@
         <span>Refresh</span>
       </button>
       <button
+        on:click|stopPropagation={modal.open}
         class="flex flex-row justify-center items-center  bg-mongo-green-btn hover:bg-mongo-green-hover px-2 rounded py-1">
         <span>Create Index </span></button>
     </div>
@@ -61,15 +130,25 @@
         Loading..
       {:then result}
         {#if result?.ok ?? false === 1}
-          <Indextable
+          <Indextable on:Refresh={Tab.Refresh}
+          {db} {collection}
             indexes={result.data?.indexes ?? []}
             indexesinfo={result.data?.indexesinfo ?? []} />
-          
         {/if}
       {/await}
     </div>
   </div>
 </div>
+
+{#if modal.state}
+  <CreateIndex
+    bind:err={modal.error}
+    bind:msg={modal.errmsg}
+    on:cancel={modal.close}
+    on:submit={modal.submit}
+    on:change={modal.change} />
+{/if}
+
 <style>
   .scrollbar::-webkit-scrollbar {
     width: 0px;
