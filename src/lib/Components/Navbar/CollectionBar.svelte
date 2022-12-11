@@ -1,11 +1,8 @@
 <script>
-  import {
-    sidebar
-  } from "$Components/stores.js";
+  import { sidebar } from "$Components/stores.js";
+  import Folder from "$Components/Icons/Folder.svelte";
   //event dispather
-  import {
-    createEventDispatcher
-  } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import Bin from "$Components/Page/Database/Icons/Bin.svelte";
   const dispatch = createEventDispatcher();
   export let collection;
@@ -57,11 +54,11 @@
       class="flex gap-1 hover:bg-base-300 justify-center items-center"
       class:active={status}>
       <span class="h-5 w-5" />
-      <span class="h-5 w-5 flex justify-center"
-        ><i class="ri-folder-fill" /></span>
+      <span class="h-5 w-5 flex justify-center items-center"><Folder /></span>
       <span class="flex-1 capitalize">{collection}</span>
       {#if hovering.state}
-        <button on:click|stopPropagation={hovering.dropCollection}
+        <button
+          on:click|stopPropagation={hovering.dropCollection}
           class="flex-0 flex justify-center items-center w-5 h-5 capitalize hover:bg-mongo-card-btnborder rounded-full transition-colors duration-100 hover:fill-mongo-white fill-white">
           <span class="" title="Drop Collection"><Bin /></span></button>
       {/if}

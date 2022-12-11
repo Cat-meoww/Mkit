@@ -10,8 +10,11 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
+		"@tailwindcss/typography": "^0.5.8",
 		"autoprefixer": "^10.4.13",
 		"daisyui": "^2.40.1",
+		"flatted": "^3.2.7",
+		"json5": "^2.2.1",
 		"mongodb": "^4.11.0",
 		"postcss": "^8.4.19",
 		"postcss-load-config": "^4.0.1",
@@ -21,10 +24,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@tailwindcss/typography": "^0.5.8",
-		"flatted": "^3.2.7",
-		"json5": "^2.2.1",
-		"remixicon": "^2.5.0",
-		"theme-change": "^2.2.0"
+		"remixicon": "^2.5.0"
 	}
 }
