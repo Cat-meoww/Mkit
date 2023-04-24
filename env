@@ -1,5 +1,5 @@
 ##PRIVATE
-MONGODB_URI="mongodb+srv://<username>:<password>@host
+MONGODB_URI="mongodb+srv://<username>:<password>@host"
 
 ##PUBLIC
 PUBLIC_APPNAME_PREFIX="Mongo"
